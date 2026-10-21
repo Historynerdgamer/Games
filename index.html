@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>America Builder</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: rgba(15, 23, 42, 0.9);
+      --panel-2: rgba(30, 41, 59, 0.85);
+      --text: #e5eefb;
+      --muted: #b8c5d8;
+      --accent: #fbbf24;
+      --accent-2: #22c55e;
+      --road: #5a6473;
+      --grass: #7ecb73;
+      --grid-line: rgba(255,255,255,0.08);
+      --shadow: rgba(3, 7, 18, 0.45);
+      --tool-bg: rgba(255,255,255,0.04);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #020817 0%, #111827 100%);
+      color: var(--text);
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      padding: 18px;
+    }
+
+    #app {
+      width: 100%;
+      max-width: 1420px;
+      min-height: 780px;
+      display: grid;
+      grid-template-columns: 280px 1fr 290px;
+      gap: 14px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      box-shadow: 0 16px 36px var(--shadow);
+    }
+
+    .side-panel {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .title {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin: 4px 0 8px;
+    }
+
+    .money-box,
+    .stat-box {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .money-box {
+      background: linear-gradient(180deg, rgba(16,185,129,0.18), rgba(34,197,94,0.04));
+      border-color: rgba(34,197,94,0.4);
+    }
+
+    .label {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.72rem;
+      margin-bottom: 8px;
+    }
+
+    .money {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #a7f3d0;
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .tool {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      background: var(--tool-bg);
+      color: var(--text);
+      padding: 10px 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.12s ease, border-color 0.12s ease;
+    }
+
+    .tool:hover {
+      transform: translateY(-1px);
+      border-color: rgba(251,191,36,0.45);
+    }
+
+    .tool.active {
+      background: linear-gradient(180deg, rgba(251,191,36,0.18), rgba(251,191,36,0.04));
+      border-color: rgba(251,191,36,0.7);
+      box-shadow: inset 0 0 0 1px rgba(251,191,36,0.28);
+    }
+
+    .tool small {
+      display: block;
+      color: var(--muted);
+      font-size: 0.7rem;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    .state-select {
+      width: 100%;
+      padding: 12px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    h3 {
+      margin: 0 0 10px 0;
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .city-name {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 999px;
+      padding: 6px 8px;
+      background: rgba(255,255,255,0.02);
+      font-size: 0.78rem;
+      color: var(--text);
+    }
+
+    .swatch {
+      width: 12px;
+      height: 12px;
+      display: inline-block;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .center-panel {
+      display: flex;
+      flex-direction: column;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 16px 36px var(--shadow);
+    }
+
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 12px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(15, 23, 42, 0.7);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      padding: 8px 12px;
+      font-weight: 700;
+    }
+
+    .mini-label {
+      color: var(--muted);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 650px;
+      background: linear-gradient(180deg, #8fd39b 0%, #75bf85 100%);
+      cursor: crosshair;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    li { color: var(--muted); }
+
+    @media (max-width: 1100px) {
+      #app {
+        grid-template-columns: 1fr;
+      }
+      .center-panel { order: 1; }
+      .left-panel { order: 2; }
+      .right-panel { order: 3; }
+      canvas { min-height: 500px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <aside class="panel left-panel side-panel">
+      <div class="title">America Builder</div>
+
+      <div class="money-box">
+        <div class="label">Budget</div>
+        <div class="money" id="moneyDisplay">∞</div>
+      </div>
+
+      <div class="stat-box">
+        <h3>State</h3>
+        <select id="stateSelect" class="state-select"></select>
+      </div>
+
+      <div class="stat-box">
+        <h3>Build Menu</h3>
+        <div class="tool-grid">
+          <button class="tool active" data-tool="road">Road<small>Route</small></button>
+          <button class="tool" data-tool="home">Home<small>Housing</small></button>
+          <button class="tool" data-tool="skyscraper">Skyscraper<small>Downtown</small></button>
+          <button class="tool" data-tool="park">Park<small>Green space</small></button>
+          <button class="tool" data-tool="landmark">Landmark<small>Famous site</small></button>
+          <button class="tool" data-tool="erase">Erase<small>Clear</small></button>
+        </div>
+      </div>
+
+      <div class="stat-box">
+        <h3>City Profile</h3>
+        <div class="city-name" id="cityName">Alabama</div>
+        <div id="cityState" style="color: var(--muted);">Birmingham</div>
+      </div>
+
+      <div class="stat-box">
+        <h3>Legend</h3>
+        <div class="legend">
+          <div class="chip"><span class="swatch" style="background:#5b6472"></span>Road</div>
+          <div class="chip"><span class="swatch" style="background:#d4eb93"></span>Home</div>
+          <div class="chip"><span class="swatch" style="background:#93a8ff"></span>Skyscraper</div>
+          <div class="chip"><span class="swatch" style="background:#4bbb67"></span>Park</div>
+          <div class="chip"><span class="swatch" style="background:#f7d679"></span>Landmark</div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="center-panel">
+      <div class="hud">
+        <div class="status-pill"><span style="font-size:1.1rem;">🏙️</span> <span id="statusLabel">State 1: Alabama</span></div>
+        <div class="mini-label" id="stateFact">Landmark: Civil Rights Memorial</div>
+      </div>
+      <canvas id="gameCanvas" width="960" height="680"></canvas>
+    </main>
+
+    <aside class="panel right-panel side-panel">
+      <div class="stat-box">
+        <h3>How to Play</h3>
+        <ul>
+          <li>Select a tool.</li>
+          <li>Click a tile to place a building.</li>
+          <li>Right-click to erase.</li>
+          <li>Switch states to visit all 50 states.</li>
+          <li>Built structures stay visible right away.</li>
+        </ul>
+      </div>
+
+      <div class="stat-box">
+        <h3>Prototype Features</h3>
+        <ul>
+          <li>Infinite money</li>
+          <li>Top-down city grid</li>
+          <li>Roads, homes, parks and skyscrapers</li>
+          <li>Landmarks and state flavor</li>
+          <li>All 50 state cities available</li>
+        </ul>
+      </div>
+
+      <div class="stat-box">
+        <h3>Selected Tool</h3>
+        <div id="toolLabel" style="font-size:1.3rem; font-weight:800;">Road</div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const stateSelect = document.getElementById('stateSelect');
+    const cityNameEl = document.getElementById('cityName');
+    const cityStateEl = document.getElementById('cityState');
+    const moneyDisplay = document.getElementById('moneyDisplay');
+    const toolLabelEl = document.getElementById('toolLabel');
+    const statusLabelEl = document.getElementById('statusLabel');
+    const stateFactEl = document.getElementById('stateFact');
+
+    const TILE = 32;
+    const COLS = 24;
+    const ROWS = 16;
+
+    const stateCatalog = [
+      { number: 1, state: 'Alabama', city: 'Birmingham', landmark: 'Civil Rights Memorial', accent: '#f3ca74', base: '#dfeecb', bg: '#9dd2a1' },
+      { number: 2, state: 'Alaska', city: 'Anchorage', landmark: 'Denali', accent: '#f0d167', base: '#dfeffe', bg: '#8fcae5' },
+      { number: 3, state: 'Arizona', city: 'Phoenix', landmark: 'Grand Canyon', accent: '#f5c66e', base: '#d6f0c0', bg: '#9fdb8d' },
+      { number: 4, state: 'Arkansas', city: 'Little Rock', landmark: 'Crystal Bridges', accent: '#f5d672', base: '#d8f0d2', bg: '#9ccf8c' },
+      { number: 5, state: 'California', city: 'Los Angeles', landmark: 'Golden Gate Bridge', accent: '#f4d36f', base: '#d3f0d3', bg: '#91d9a9' },
+      { number: 6, state: 'Colorado', city: 'Denver', landmark: 'Rocky Mountains', accent: '#f3bc69', base: '#d8efc4', bg: '#9ed196' },
+      { number: 7, state: 'Connecticut', city: 'Hartford', landmark: 'Mystic Seaport', accent: '#f1d16b', base: '#dfeecf', bg: '#a3d7ba' },
+      { number: 8, state: 'Delaware', city: 'Wilmington', landmark: 'Rehoboth Beach', accent: '#f1d66d', base: '#d8f0d3', bg: '#a0d7b8' },
+      { number: 9, state: 'Florida', city: 'Miami', landmark: 'Cape Canaveral', accent: '#f7d57b', base: '#d8f0ca', bg: '#8fd0a2' },
+      { number: 10, state: 'Georgia', city: 'Atlanta', landmark: 'Georgia Aquarium', accent: '#f5d86d', base: '#d7f0d4', bg: '#9cd8a7' },
+      { number: 11, state: 'Hawaii', city: 'Honolulu', landmark: 'Diamond Head', accent: '#f2d469', base: '#dfeee6', bg: '#9acdb5' },
+      { number: 12, state: 'Idaho', city: 'Boise', landmark: 'Sun Valley', accent: '#f0d66a', base: '#d8f0d9', bg: '#a0d1ae' },
+      { number: 13, state: 'Illinois', city: 'Chicago', landmark: 'Chicago Skyline', accent: '#f4cf65', base: '#d6e7d8', bg: '#9ccbb3' },
+      { number: 14, state: 'Indiana', city: 'Indianapolis', landmark: 'Indianapolis Motor Speedway', accent: '#f4ce66', base: '#d5efd1', bg: '#9ad1a7' },
+      { number: 15, state: 'Iowa', city: 'Des Moines', landmark: 'Amana Colonies', accent: '#f0d77e', base: '#dff1d8', bg: '#a9d99d' },
+      { number: 16, state: 'Kansas', city: 'Wichita', landmark: 'Tallgrass Prairie', accent: '#f3d66d', base: '#dfecc1', bg: '#b5d98d' },
+      { number: 17, state: 'Kentucky', city: 'Louisville', landmark: 'Louisville Slugger Museum', accent: '#f1d067', base: '#d9efca', bg: '#99d2a1' },
+      { number: 18, state: 'Louisiana', city: 'New Orleans', landmark: 'French Quarter', accent: '#f8d36d', base: '#d8efcf', bg: '#9bd7a8' },
+      { number: 19, state: 'Maine', city: 'Portland', landmark: 'Acadia National Park', accent: '#efcf75', base: '#d7efd4', bg: '#a5d3ad' },
+      { number: 20, state: 'Maryland', city: 'Baltimore', landmark: 'Fort McHenry', accent: '#f5ce69', base: '#d9f0d6', bg: '#9ecdb8' },
+      { number: 21, state: 'Massachusetts', city: 'Boston', landmark: 'Fenway Park', accent: '#efca68', base: '#d8efd7', bg: '#9cd7b7' },
+      { number: 22, state: 'Michigan', city: 'Detroit', landmark: 'Detroit Riverfront', accent: '#f3d86d', base: '#d7efd8', bg: '#9fd1b4' },
+      { number: 23, state: 'Minnesota', city: 'Minneapolis', landmark: 'Mall of America', accent: '#f1d96d', base: '#d7efdf', bg: '#9ac7b0' },
+      { number: 24, state: 'Mississippi', city: 'Jackson', landmark: 'Vicksburg Battlefield', accent: '#f0d873', base: '#d8efcb', bg: '#9aba8d' },
+      { number: 25, state: 'Missouri', city: 'St. Louis', landmark: 'Gateway Arch', accent: '#f7d76a', base: '#d8efc8', bg: '#9ad1a5' },
+      { number: 26, state: 'Montana', city: 'Billings', landmark: 'Glacier National Park', accent: '#edd36f', base: '#d9efce', bg: '#a0d0b3' },
+      { number: 27, state: 'Nebraska', city: 'Omaha', landmark: 'Strategic Air Command Museum', accent: '#f3d975', base: '#d9efd4', bg: '#9fd7a8' },
+      { number: 28, state: 'Nevada', city: 'Las Vegas', landmark: 'Las Vegas Strip', accent: '#f7d76d', base: '#d4edc9', bg: '#9bd0a9' },
+      { number: 29, state: 'New Hampshire', city: 'Manchester', landmark: 'Mount Washington', accent: '#f2cf64', base: '#d9efdb', bg: '#a0d0b8' },
+      { number: 30, state: 'New Jersey', city: 'Newark', landmark: 'Atlantic City Boardwalk', accent: '#f4d367', base: '#d9f0d7', bg: '#a5d5b8' },
+      { number: 31, state: 'New Mexico', city: 'Albuquerque', landmark: 'Balloon Fiesta', accent: '#f4c970', base: '#d8efc5', bg: '#a5d19f' },
+      { number: 32, state: 'New York', city: 'New York City', landmark: 'Statue of Liberty', accent: '#f8d564', base: '#d7e9d7', bg: '#9fc8c7' },
+      { number: 33, state: 'North Carolina', city: 'Charlotte', landmark: 'Biltmore Estate', accent: '#f6d76f', base: '#d8efd5', bg: '#9fd5b4' },
+      { number: 34, state: 'North Dakota', city: 'Bismarck', landmark: 'Medora Badlands', accent: '#f1d76b', base: '#d8efcc', bg: '#a4d19a' },
+      { number: 35, state: 'Ohio', city: 'Columbus', landmark: 'Rock and Roll Hall of Fame', accent: '#f4d06a', base: '#d8efd0', bg: '#9acdb1' },
+      { number: 36, state: 'Oklahoma', city: 'Oklahoma City', landmark: 'Route 66', accent: '#f3d06a', base: '#ddf0ca', bg: '#a7d79f' },
+      { number: 37, state: 'Oregon', city: 'Portland', landmark: 'Portland Rose Garden', accent: '#f6d76d', base: '#d6efdd', bg: '#9cd4b5' },
+      { number: 38, state: 'Pennsylvania', city: 'Philadelphia', landmark: 'Liberty Bell', accent: '#f6d267', base: '#d6efd4', bg: '#9ccdb3' },
+      { number: 39, state: 'Rhode Island', city: 'Providence', landmark: 'Newport Mansions', accent: '#f1d56b', base: '#d9f0d7', bg: '#a5d8be' },
+      { number: 40, state: 'South Carolina', city: 'Charleston', landmark: 'Charleston Waterfront', accent: '#f3d76b', base: '#d9efd4', bg: '#9fd0a5' },
+      { number: 41, state: 'South Dakota', city: 'Sioux Falls', landmark: 'Mount Rushmore', accent: '#f3d26d', base: '#d9efc7', bg: '#a3d39c' },
+      { number: 42, state: 'Tennessee', city: 'Nashville', landmark: 'Music City', accent: '#f4d76d', base: '#d9efd7', bg: '#9cd5aa' },
+      { number: 43, state: 'Texas', city: 'Houston', landmark: 'The Alamo', accent: '#f9d66d', base: '#d6efc8', bg: '#a1dca6' },
+      { number: 44, state: 'Utah', city: 'Salt Lake City', landmark: 'Zion National Park', accent: '#f2d66d', base: '#d7f0d6', bg: '#9fd7b1' },
+      { number: 45, state: 'Vermont', city: 'Burlington', landmark: 'Ben & Jerry\'s Factory', accent: '#f0d573', base: '#dfeed7', bg: '#a6d6b4' },
+      { number: 46, state: 'Virginia', city: 'Richmond', landmark: 'Monticello', accent: '#f5d670', base: '#d8efd8', bg: '#9bd3b1' },
+      { number: 47, state: 'Washington', city: 'Seattle', landmark: 'Space Needle', accent: '#f4d979', base: '#d8f0dd', bg: '#9fd9bc' },
+      { number: 48, state: 'West Virginia', city: 'Charleston', landmark: 'The Greenbrier', accent: '#f3d36b', base: '#dfecc6', bg: '#a7d89b' },
+      { number: 49, state: 'Wisconsin', city: 'Milwaukee', landmark: 'Milwaukee Art Museum', accent: '#f4d46d', base: '#d9efd7', bg: '#9ed0a9' },
+      { number: 50, state: 'Wyoming', city: 'Cheyenne', landmark: 'Yellowstone', accent: '#edd474', base: '#d8efd3', bg: '#a0d49c' }
+    ];
+
+    const tools = {
+      road: 'Road',
+      home: 'Home',
+      skyscraper: 'Skyscraper',
+      park: 'Park',
+      landmark: 'Landmark',
+      erase: 'Erase'
+    };
+
+    let selectedTool = 'road';
+    let currentStateIndex = 0;
+    let grid = [];
+
+    function buildStateSelector() {
+      stateCatalog.forEach((entry) => {
+        const option = document.createElement('option');
+        option.value = String(entry.number - 1);
+        option.textContent = `${entry.number}. ${entry.state} - ${entry.city}`;
+        stateSelect.appendChild(option);
+      });
+      stateSelect.value = '0';
+    }
+
+    function createEmptyGrid() {
+      return Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+    }
+
+    function drawBaseGrid() {
+      const active = stateCatalog[currentStateIndex];
+      for (let y = 0; y < ROWS; y++) {
+        for (let x = 0; x < COLS; x++) {
+          const px = x * TILE;
+          const py = y * TILE;
+          ctx.fillStyle = active.base;
+          ctx.fillRect(px, py, TILE, TILE);
+          ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+          ctx.strokeRect(px + 0.5, py + 0.5, TILE - 1, TILE - 1);
+        }
+      }
+    }
+
+    function drawRoad(px, py) {
+      ctx.fillStyle = '#5b6472';
+      ctx.fillRect(px, py, TILE, TILE);
+      ctx.fillStyle = 'rgba(255,255,255,0.34)';
+      ctx.fillRect(px + 5, py + 12, TILE - 10, 4);
+      ctx.fillRect(px + 5, py + TILE - 16, TILE - 10, 4);
+      ctx.fillStyle = '#dfe5ee';
+      ctx.fillRect(px + 12, py + 18, 7, 6);
+      ctx.fillRect(px + TILE - 19, py + 18, 7, 6);
+      ctx.fillRect(px + 12, py + TILE - 24, 7, 6);
+      ctx.fillRect(px + TILE - 19, py + TILE - 24, 7, 6);
+    }
+
+    function drawHome(px, py) {
+      ctx.fillStyle = '#d4eb93';
+      ctx.fillRect(px + 7, py + 12, TILE - 14, TILE - 16);
+      ctx.fillStyle = '#ba9f64';
+      ctx.fillRect(px + 5, py + 10, TILE - 10, 8);
+      ctx.fillStyle = '#a57e4d';
+      ctx.fillRect(px + 9, py + 22, TILE - 18, TILE - 30);
+      ctx.fillStyle = '#3c6d47';
+      ctx.fillRect(px + 12, py + TILE - 17, TILE - 24, 5);
+      ctx.fillStyle = '#7ca85d';
+      ctx.fillRect(px + 13, py + 18, 6, 6);
+      ctx.fillRect(px + TILE - 19, py + 18, 6, 6);
+      ctx.fillRect(px + 13, py + TILE - 23, 6, 6);
+      ctx.fillRect(px + TILE - 19, py + TILE - 23, 6, 6);
+    }
+
+    function drawSkyscraper(px, py) {
+      ctx.fillStyle = '#9aaaff';
+      ctx.fillRect(px + 5, py + 4, TILE - 10, TILE + 2);
+      ctx.fillStyle = '#ccd3ff';
+      for (let yy = 0; yy < 5; yy++) {
+        for (let xx = 0; xx < 2; xx++) {
+          ctx.fillRect(px + 12 + xx * 18, py + 12 + yy * 18, 10, 10);
+        }
+      }
+      ctx.fillStyle = '#7c8ad4';
+      ctx.fillRect(px + 10, py + TILE - 8, TILE - 20, 8);
+      ctx.fillStyle = '#6c7dc9';
+      ctx.fillRect(px + 12, py + 3, TILE - 24, 5);
+    }
+
+    function drawPark(px, py) {
+      ctx.fillStyle = '#58b76e';
+      ctx.fillRect(px, py, TILE, TILE);
+      ctx.fillStyle = '#e3f6a6';
+      ctx.beginPath();
+      ctx.arc(px + 11, py + 11, 5.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#2f8d56';
+      ctx.fillRect(px + 14, py + 18, 4, 12);
+      ctx.beginPath();
+      ctx.arc(px + 17, py + 17, 7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(px + TILE - 12, py + 16, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillRect(px + TILE - 15, py + 22, 4, 12);
+      ctx.beginPath();
+      ctx.arc(px + 22, py + TILE - 14, 7, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawLandmark(px, py) {
+      const accent = stateCatalog[currentStateIndex].accent;
+      ctx.fillStyle = accent;
+      ctx.fillRect(px + 8, py + 5, TILE - 16, TILE - 10);
+      ctx.fillStyle = '#e7bc58';
+      ctx.fillRect(px + 9, py + 7, TILE - 18, 8);
+      ctx.fillStyle = '#d0a34b';
+      ctx.beginPath();
+      ctx.moveTo(px + TILE / 2, py + 1);
+      ctx.lineTo(px + TILE - 8, py + 18);
+      ctx.lineTo(px + 8, py + 18);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = '#f7d679';
+      ctx.fillRect(px + 15, py + 21, TILE - 30, TILE - 34);
+      ctx.fillStyle = '#d7a957';
+      ctx.fillRect(px + 12, py + TILE - 11, TILE - 24, 5);
+    }
+
+    function renderGrid() {
+      drawBaseGrid();
+      for (let y = 0; y < ROWS; y++) {
+        for (let x = 0; x < COLS; x++) {
+          const cell = grid[y][x];
+          if (!cell) continue;
+          const px = x * TILE;
+          const py = y * TILE;
+          switch (cell.type) {
+            case 'road':
+              drawRoad(px, py);
+              break;
+            case 'home':
+              drawHome(px, py);
+              break;
+            case 'skyscraper':
+              drawSkyscraper(px, py);
+              break;
+            case 'park':
+              drawPark(px, py);
+              break;
+            case 'landmark':
+              drawLandmark(px, py);
+              break;
+          }
+        }
+      }
+    }
+
+    function updateHud() {
+      const active = stateCatalog[currentStateIndex];
+      moneyDisplay.textContent = '∞';
+      cityNameEl.textContent = active.city;
+      cityStateEl.textContent = active.state;
+      statusLabelEl.textContent = `State ${active.number}: ${active.state}`;
+      stateFactEl.textContent = `Landmark: ${active.landmark}`;
+      toolLabelEl.textContent = tools[selectedTool];
+    }
+
+    function setTool(tool) {
+      selectedTool = tool;
+      document.querySelectorAll('.tool').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.tool === tool);
+      });
+      updateHud();
+    }
+
+    function getCellFromMouse(event) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const x = (event.clientX - rect.left) * scaleX;
+      const y = (event.clientY - rect.top) * scaleY;
+      const cellX = Math.floor(x / TILE);
+      const cellY = Math.floor(y / TILE);
+      if (cellX < 0 || cellY < 0 || cellX >= COLS || cellY >= ROWS) return null;
+      return { x: cellX, y: cellY };
+    }
+
+    function placeTile(x, y) {
+      if (selectedTool === 'erase') {
+        grid[y][x] = null;
+        render();
+        return;
+      }
+
+      grid[y][x] = { type: selectedTool };
+      render();
+    }
+
+    function handleCanvasClick(event) {
+      const cell = getCellFromMouse(event);
+      if (!cell) return;
+      placeTile(cell.x, cell.y);
+    }
+
+    function handleContextMenu(event) {
+      event.preventDefault();
+      const cell = getCellFromMouse(event);
+      if (!cell) return;
+      grid[cell.y][cell.x] = null;
+      render();
+    }
+
+    function switchState(index) {
+      currentStateIndex = Number(index);
+      grid = createEmptyGrid();
+      stateSelect.value = String(currentStateIndex);
+      updateHud();
+      render();
+    }
+
+    function render() {
+      renderGrid();
+      updateHud();
+    }
+
+    function init() {
+      buildStateSelector();
+
+      stateSelect.addEventListener('change', (event) => {
+        switchState(event.target.value);
+      });
+
+      document.querySelectorAll('.tool').forEach((button) => {
+        button.addEventListener('click', () => setTool(button.dataset.tool));
+      });
+
+      canvas.addEventListener('click', handleCanvasClick);
+      canvas.addEventListener('contextmenu', handleContextMenu);
+
+      switchState(0);
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -279,8 +279,8 @@
 
       <div class="stat-box">
         <h3>City Profile</h3>
-        <div class="city-name" id="cityName">Alabama</div>
-        <div id="cityState" style="color: var(--muted);">Birmingham</div>
+        <div class="city-name" id="cityName">Delaware</div>
+        <div id="cityState" style="color: var(--muted);">Wilmington</div>
       </div>
 
       <div class="stat-box">
@@ -297,8 +297,8 @@
 
     <main class="center-panel">
       <div class="hud">
-        <div class="status-pill"><span style="font-size:1.1rem;">🏙️</span> <span id="statusLabel">State 1: Alabama</span></div>
-        <div class="mini-label" id="stateFact">Landmark: Civil Rights Memorial</div>
+        <div class="status-pill"><span style="font-size:1.1rem;">🏙️</span> <span id="statusLabel">State 1: Delaware</span></div>
+        <div class="mini-label" id="stateFact">Landmark: First State</div>
       </div>
       <canvas id="gameCanvas" width="960" height="680"></canvas>
     </main>
@@ -310,7 +310,7 @@
           <li>Select a tool.</li>
           <li>Click a tile to place a building.</li>
           <li>Right-click to erase.</li>
-          <li>Switch states to visit all 50 states.</li>
+          <li>Switch states to visit all 50 states by statehood chronology.</li>
           <li>Built structures stay visible right away.</li>
         </ul>
       </div>
@@ -350,56 +350,56 @@
     const ROWS = 16;
 
     const stateCatalog = [
-      { number: 1, state: 'Alabama', city: 'Birmingham', landmark: 'Civil Rights Memorial', accent: '#f3ca74', base: '#dfeecb', bg: '#9dd2a1' },
-      { number: 2, state: 'Alaska', city: 'Anchorage', landmark: 'Denali', accent: '#f0d167', base: '#dfeffe', bg: '#8fcae5' },
-      { number: 3, state: 'Arizona', city: 'Phoenix', landmark: 'Grand Canyon', accent: '#f5c66e', base: '#d6f0c0', bg: '#9fdb8d' },
-      { number: 4, state: 'Arkansas', city: 'Little Rock', landmark: 'Crystal Bridges', accent: '#f5d672', base: '#d8f0d2', bg: '#9ccf8c' },
-      { number: 5, state: 'California', city: 'Los Angeles', landmark: 'Golden Gate Bridge', accent: '#f4d36f', base: '#d3f0d3', bg: '#91d9a9' },
-      { number: 6, state: 'Colorado', city: 'Denver', landmark: 'Rocky Mountains', accent: '#f3bc69', base: '#d8efc4', bg: '#9ed196' },
-      { number: 7, state: 'Connecticut', city: 'Hartford', landmark: 'Mystic Seaport', accent: '#f1d16b', base: '#dfeecf', bg: '#a3d7ba' },
-      { number: 8, state: 'Delaware', city: 'Wilmington', landmark: 'Rehoboth Beach', accent: '#f1d66d', base: '#d8f0d3', bg: '#a0d7b8' },
-      { number: 9, state: 'Florida', city: 'Miami', landmark: 'Cape Canaveral', accent: '#f7d57b', base: '#d8f0ca', bg: '#8fd0a2' },
-      { number: 10, state: 'Georgia', city: 'Atlanta', landmark: 'Georgia Aquarium', accent: '#f5d86d', base: '#d7f0d4', bg: '#9cd8a7' },
-      { number: 11, state: 'Hawaii', city: 'Honolulu', landmark: 'Diamond Head', accent: '#f2d469', base: '#dfeee6', bg: '#9acdb5' },
-      { number: 12, state: 'Idaho', city: 'Boise', landmark: 'Sun Valley', accent: '#f0d66a', base: '#d8f0d9', bg: '#a0d1ae' },
-      { number: 13, state: 'Illinois', city: 'Chicago', landmark: 'Chicago Skyline', accent: '#f4cf65', base: '#d6e7d8', bg: '#9ccbb3' },
-      { number: 14, state: 'Indiana', city: 'Indianapolis', landmark: 'Indianapolis Motor Speedway', accent: '#f4ce66', base: '#d5efd1', bg: '#9ad1a7' },
-      { number: 15, state: 'Iowa', city: 'Des Moines', landmark: 'Amana Colonies', accent: '#f0d77e', base: '#dff1d8', bg: '#a9d99d' },
-      { number: 16, state: 'Kansas', city: 'Wichita', landmark: 'Tallgrass Prairie', accent: '#f3d66d', base: '#dfecc1', bg: '#b5d98d' },
-      { number: 17, state: 'Kentucky', city: 'Louisville', landmark: 'Louisville Slugger Museum', accent: '#f1d067', base: '#d9efca', bg: '#99d2a1' },
-      { number: 18, state: 'Louisiana', city: 'New Orleans', landmark: 'French Quarter', accent: '#f8d36d', base: '#d8efcf', bg: '#9bd7a8' },
-      { number: 19, state: 'Maine', city: 'Portland', landmark: 'Acadia National Park', accent: '#efcf75', base: '#d7efd4', bg: '#a5d3ad' },
-      { number: 20, state: 'Maryland', city: 'Baltimore', landmark: 'Fort McHenry', accent: '#f5ce69', base: '#d9f0d6', bg: '#9ecdb8' },
-      { number: 21, state: 'Massachusetts', city: 'Boston', landmark: 'Fenway Park', accent: '#efca68', base: '#d8efd7', bg: '#9cd7b7' },
-      { number: 22, state: 'Michigan', city: 'Detroit', landmark: 'Detroit Riverfront', accent: '#f3d86d', base: '#d7efd8', bg: '#9fd1b4' },
-      { number: 23, state: 'Minnesota', city: 'Minneapolis', landmark: 'Mall of America', accent: '#f1d96d', base: '#d7efdf', bg: '#9ac7b0' },
-      { number: 24, state: 'Mississippi', city: 'Jackson', landmark: 'Vicksburg Battlefield', accent: '#f0d873', base: '#d8efcb', bg: '#9aba8d' },
-      { number: 25, state: 'Missouri', city: 'St. Louis', landmark: 'Gateway Arch', accent: '#f7d76a', base: '#d8efc8', bg: '#9ad1a5' },
-      { number: 26, state: 'Montana', city: 'Billings', landmark: 'Glacier National Park', accent: '#edd36f', base: '#d9efce', bg: '#a0d0b3' },
-      { number: 27, state: 'Nebraska', city: 'Omaha', landmark: 'Strategic Air Command Museum', accent: '#f3d975', base: '#d9efd4', bg: '#9fd7a8' },
-      { number: 28, state: 'Nevada', city: 'Las Vegas', landmark: 'Las Vegas Strip', accent: '#f7d76d', base: '#d4edc9', bg: '#9bd0a9' },
-      { number: 29, state: 'New Hampshire', city: 'Manchester', landmark: 'Mount Washington', accent: '#f2cf64', base: '#d9efdb', bg: '#a0d0b8' },
-      { number: 30, state: 'New Jersey', city: 'Newark', landmark: 'Atlantic City Boardwalk', accent: '#f4d367', base: '#d9f0d7', bg: '#a5d5b8' },
-      { number: 31, state: 'New Mexico', city: 'Albuquerque', landmark: 'Balloon Fiesta', accent: '#f4c970', base: '#d8efc5', bg: '#a5d19f' },
-      { number: 32, state: 'New York', city: 'New York City', landmark: 'Statue of Liberty', accent: '#f8d564', base: '#d7e9d7', bg: '#9fc8c7' },
-      { number: 33, state: 'North Carolina', city: 'Charlotte', landmark: 'Biltmore Estate', accent: '#f6d76f', base: '#d8efd5', bg: '#9fd5b4' },
-      { number: 34, state: 'North Dakota', city: 'Bismarck', landmark: 'Medora Badlands', accent: '#f1d76b', base: '#d8efcc', bg: '#a4d19a' },
-      { number: 35, state: 'Ohio', city: 'Columbus', landmark: 'Rock and Roll Hall of Fame', accent: '#f4d06a', base: '#d8efd0', bg: '#9acdb1' },
-      { number: 36, state: 'Oklahoma', city: 'Oklahoma City', landmark: 'Route 66', accent: '#f3d06a', base: '#ddf0ca', bg: '#a7d79f' },
-      { number: 37, state: 'Oregon', city: 'Portland', landmark: 'Portland Rose Garden', accent: '#f6d76d', base: '#d6efdd', bg: '#9cd4b5' },
-      { number: 38, state: 'Pennsylvania', city: 'Philadelphia', landmark: 'Liberty Bell', accent: '#f6d267', base: '#d6efd4', bg: '#9ccdb3' },
-      { number: 39, state: 'Rhode Island', city: 'Providence', landmark: 'Newport Mansions', accent: '#f1d56b', base: '#d9f0d7', bg: '#a5d8be' },
-      { number: 40, state: 'South Carolina', city: 'Charleston', landmark: 'Charleston Waterfront', accent: '#f3d76b', base: '#d9efd4', bg: '#9fd0a5' },
-      { number: 41, state: 'South Dakota', city: 'Sioux Falls', landmark: 'Mount Rushmore', accent: '#f3d26d', base: '#d9efc7', bg: '#a3d39c' },
-      { number: 42, state: 'Tennessee', city: 'Nashville', landmark: 'Music City', accent: '#f4d76d', base: '#d9efd7', bg: '#9cd5aa' },
-      { number: 43, state: 'Texas', city: 'Houston', landmark: 'The Alamo', accent: '#f9d66d', base: '#d6efc8', bg: '#a1dca6' },
-      { number: 44, state: 'Utah', city: 'Salt Lake City', landmark: 'Zion National Park', accent: '#f2d66d', base: '#d7f0d6', bg: '#9fd7b1' },
-      { number: 45, state: 'Vermont', city: 'Burlington', landmark: 'Ben & Jerry\'s Factory', accent: '#f0d573', base: '#dfeed7', bg: '#a6d6b4' },
-      { number: 46, state: 'Virginia', city: 'Richmond', landmark: 'Monticello', accent: '#f5d670', base: '#d8efd8', bg: '#9bd3b1' },
-      { number: 47, state: 'Washington', city: 'Seattle', landmark: 'Space Needle', accent: '#f4d979', base: '#d8f0dd', bg: '#9fd9bc' },
-      { number: 48, state: 'West Virginia', city: 'Charleston', landmark: 'The Greenbrier', accent: '#f3d36b', base: '#dfecc6', bg: '#a7d89b' },
-      { number: 49, state: 'Wisconsin', city: 'Milwaukee', landmark: 'Milwaukee Art Museum', accent: '#f4d46d', base: '#d9efd7', bg: '#9ed0a9' },
-      { number: 50, state: 'Wyoming', city: 'Cheyenne', landmark: 'Yellowstone', accent: '#edd474', base: '#d8efd3', bg: '#a0d49c' }
+      { number: 1, state: 'Delaware', city: 'Wilmington', landmark: 'First State', accent: '#f5d76a', base: '#dcefd7', bg: '#9fd8bb' },
+      { number: 2, state: 'Pennsylvania', city: 'Philadelphia', landmark: 'Liberty Bell', accent: '#f7d46a', base: '#d7efd7', bg: '#9ccfbb' },
+      { number: 3, state: 'New Jersey', city: 'Newark', landmark: 'Atlantic City Boardwalk', accent: '#f5d06e', base: '#d9f0d9', bg: '#9bd3b9' },
+      { number: 4, state: 'Georgia', city: 'Atlanta', landmark: 'Georgia Aquarium', accent: '#f7d96d', base: '#d7f0d5', bg: '#9ad5aa' },
+      { number: 5, state: 'Connecticut', city: 'Hartford', landmark: 'Mystic Seaport', accent: '#f0cf66', base: '#dfeecf', bg: '#a3d9b7' },
+      { number: 6, state: 'Massachusetts', city: 'Boston', landmark: 'Fenway Park', accent: '#f0cb68', base: '#d9efd7', bg: '#9ed5b8' },
+      { number: 7, state: 'Maryland', city: 'Baltimore', landmark: 'Fort McHenry', accent: '#f5cf6c', base: '#d9f0d7', bg: '#9fcdb5' },
+      { number: 8, state: 'South Carolina', city: 'Charleston', landmark: 'Charleston Waterfront', accent: '#f4d66d', base: '#d8efd3', bg: '#9ecfa6' },
+      { number: 9, state: 'New Hampshire', city: 'Manchester', landmark: 'Mount Washington', accent: '#f2d063', base: '#d9efdd', bg: '#9fd5be' },
+      { number: 10, state: 'Virginia', city: 'Richmond', landmark: 'Monticello', accent: '#f6d76d', base: '#d5efcf', bg: '#9ed2b0' },
+      { number: 11, state: 'New York', city: 'New York City', landmark: 'Statue of Liberty', accent: '#f7d564', base: '#d7e9d8', bg: '#9ec7c7' },
+      { number: 12, state: 'North Carolina', city: 'Charlotte', landmark: 'Biltmore Estate', accent: '#f6d973', base: '#d8efd6', bg: '#9fd5b5' },
+      { number: 13, state: 'Rhode Island', city: 'Providence', landmark: 'Newport Mansions', accent: '#f0d56d', base: '#d9f0d8', bg: '#a6d8c1' },
+      { number: 14, state: 'Vermont', city: 'Burlington', landmark: 'Ben & Jerry\'s Factory', accent: '#f0d36f', base: '#dfeee3', bg: '#a6d7b5' },
+      { number: 15, state: 'Kentucky', city: 'Louisville', landmark: 'Louisville Slugger Museum', accent: '#f1d067', base: '#d9efc9', bg: '#99d1a1' },
+      { number: 16, state: 'Tennessee', city: 'Nashville', landmark: 'Music City', accent: '#f4d76d', base: '#d8efd8', bg: '#9dd4aa' },
+      { number: 17, state: 'Ohio', city: 'Columbus', landmark: 'Rock and Roll Hall of Fame', accent: '#f4d06a', base: '#d8efd0', bg: '#9ed0af' },
+      { number: 18, state: 'Louisiana', city: 'New Orleans', landmark: 'French Quarter', accent: '#f9d26d', base: '#d8efcf', bg: '#9ad5a5' },
+      { number: 19, state: 'Indiana', city: 'Indianapolis', landmark: 'Indianapolis Motor Speedway', accent: '#f4ce63', base: '#d5efd2', bg: '#9ad1ab' },
+      { number: 20, state: 'Mississippi', city: 'Jackson', landmark: 'Vicksburg Battlefield', accent: '#f2d778', base: '#d7efcb', bg: '#9ab98a' },
+      { number: 21, state: 'Illinois', city: 'Chicago', landmark: 'Chicago Skyline', accent: '#f5d06f', base: '#d6e8d7', bg: '#9ccbb4' },
+      { number: 22, state: 'Alabama', city: 'Birmingham', landmark: 'Civil Rights Memorial', accent: '#f2c972', base: '#dfeec9', bg: '#9bcfa3' },
+      { number: 23, state: 'Maine', city: 'Portland', landmark: 'Acadia National Park', accent: '#efcf76', base: '#d7efd5', bg: '#a5d6ad' },
+      { number: 24, state: 'Missouri', city: 'St. Louis', landmark: 'Gateway Arch', accent: '#f7d768', base: '#d8efca', bg: '#9cd0a3' },
+      { number: 25, state: 'Arkansas', city: 'Little Rock', landmark: 'Crystal Bridges', accent: '#f5d872', base: '#d7f0d3', bg: '#9ecf8b' },
+      { number: 26, state: 'Michigan', city: 'Detroit', landmark: 'Detroit Riverfront', accent: '#f2d86c', base: '#d7efd8', bg: '#9fd3b5' },
+      { number: 27, state: 'Florida', city: 'Miami', landmark: 'Cape Canaveral', accent: '#f8d57c', base: '#d8f0ca', bg: '#8fd3a3' },
+      { number: 28, state: 'Texas', city: 'Houston', landmark: 'The Alamo', accent: '#f9d66d', base: '#d6efca', bg: '#a0d9a2' },
+      { number: 29, state: 'Iowa', city: 'Des Moines', landmark: 'Amana Colonies', accent: '#f0d883', base: '#dff1d9', bg: '#a8d998' },
+      { number: 30, state: 'Wisconsin', city: 'Milwaukee', landmark: 'Milwaukee Art Museum', accent: '#f4d56d', base: '#d9efd8', bg: '#9ed0a9' },
+      { number: 31, state: 'California', city: 'Los Angeles', landmark: 'Golden Gate Bridge', accent: '#f4d26d', base: '#d4f0d6', bg: '#92d8a9' },
+      { number: 32, state: 'Minnesota', city: 'Minneapolis', landmark: 'Mall of America', accent: '#f2d96d', base: '#d7efdf', bg: '#9bc7b1' },
+      { number: 33, state: 'Oregon', city: 'Portland', landmark: 'Portland Rose Garden', accent: '#f6d66b', base: '#d7efde', bg: '#9fd3b3' },
+      { number: 34, state: 'Kansas', city: 'Wichita', landmark: 'Tallgrass Prairie', accent: '#f4d572', base: '#dfecc0', bg: '#b7d98d' },
+      { number: 35, state: 'West Virginia', city: 'Charleston', landmark: 'The Greenbrier', accent: '#f3d36b', base: '#dfecc5', bg: '#a6d69b' },
+      { number: 36, state: 'Nevada', city: 'Las Vegas', landmark: 'Las Vegas Strip', accent: '#f9d76d', base: '#d4edc6', bg: '#9fd1a8' },
+      { number: 37, state: 'Nebraska', city: 'Omaha', landmark: 'Strategic Air Command Museum', accent: '#f3da76', base: '#d9efd3', bg: '#9ed8a7' },
+      { number: 38, state: 'Colorado', city: 'Denver', landmark: 'Rocky Mountains', accent: '#f5bd69', base: '#d8efc2', bg: '#9ecf96' },
+      { number: 39, state: 'North Dakota', city: 'Bismarck', landmark: 'Medora Badlands', accent: '#f2d7a4', base: '#d7efcd', bg: '#a5d09d' },
+      { number: 40, state: 'South Dakota', city: 'Sioux Falls', landmark: 'Mount Rushmore', accent: '#f3d36d', base: '#d8efc8', bg: '#a3d19b' },
+      { number: 41, state: 'Montana', city: 'Billings', landmark: 'Glacier National Park', accent: '#edcd74', base: '#d9efcf', bg: '#9fceb5' },
+      { number: 42, state: 'Washington', city: 'Seattle', landmark: 'Space Needle', accent: '#f4d87b', base: '#d8f0dd', bg: '#9fd9ba' },
+      { number: 43, state: 'Idaho', city: 'Boise', landmark: 'Sun Valley', accent: '#f0d66a', base: '#d8f0d9', bg: '#a0d1b2' },
+      { number: 44, state: 'Wyoming', city: 'Cheyenne', landmark: 'Yellowstone', accent: '#edd474', base: '#d8efd3', bg: '#a0d49a' },
+      { number: 45, state: 'Utah', city: 'Salt Lake City', landmark: 'Zion National Park', accent: '#f2d76b', base: '#d7f0d7', bg: '#9ed6b2' },
+      { number: 46, state: 'Oklahoma', city: 'Oklahoma City', landmark: 'Route 66', accent: '#f3d06a', base: '#ddf0cb', bg: '#a8d7a1' },
+      { number: 47, state: 'New Mexico', city: 'Albuquerque', landmark: 'Balloon Fiesta', accent: '#f4c96d', base: '#d8efc5', bg: '#a5d09c' },
+      { number: 48, state: 'Arizona', city: 'Phoenix', landmark: 'Grand Canyon', accent: '#f5c66e', base: '#d6f0c0', bg: '#9fdb8d' },
+      { number: 49, state: 'Alaska', city: 'Anchorage', landmark: 'Denali', accent: '#f0d267', base: '#dfeffe', bg: '#8fcae5' },
+      { number: 50, state: 'Hawaii', city: 'Honolulu', landmark: 'Diamond Head', accent: '#f2d468', base: '#dfeee7', bg: '#9dcdb5' }
     ];
 
     const tools = {
